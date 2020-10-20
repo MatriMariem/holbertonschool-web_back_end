@@ -10,12 +10,10 @@ wait_random = __import__('0-basic_async_syntax').wait_random
 
 async def wait_n(n: int, max_delay: int) -> List[float]:
     """
-    asynchronous coroutine wait_random that
-    takes in an integer argument
-    (max_delay, with a default value of 10)
-    and waits for a random delay between 0 and max_delay
-    (included and float value) seconds
-    and eventually returns it
+    async routine called wait_n
+    that takes in 2 int arguments:
+    max_delay and n.
+    You will spawn wait_random n times with the specified max_delay.
     """
     l = [
         wait_random(max_delay) for i in range(n)
