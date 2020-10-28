@@ -55,10 +55,6 @@ class Server:
         """
         assert (isinstance(index, int)
                 and index in range(len(self.__indexed_dataset)))
-        if (index + page_size) < len(self.__indexed_dataset):
-            next = index + page_size
-        else:
-            next = None
         data = []
         diff = 0
         row = index
@@ -69,5 +65,9 @@ class Server:
                 diff += 1
             else:
                 row += 1
+        if row < len(self.__indexed_dataset):
+            next = row
+        else:
+            next = None
         return {'index': index, 'next_index': next,
                 'page_size': len(data), 'data': data}
