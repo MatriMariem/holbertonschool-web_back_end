@@ -23,6 +23,7 @@ class RedactingFormatter(logging.Formatter):
         msg = logging.Formatter(self.FORMAT).format(record)
         return filter_datum(self.fields, self.REDACTION, msg, self.SEPARATOR)
 
+
 def filter_datum(fields: List[str], redaction: str, message: str,
                  separator: str) -> str:
     """ A function that returns the log message obfuscated """
