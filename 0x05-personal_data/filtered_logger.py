@@ -3,15 +3,16 @@
 function filter_datum
 """
 import re
+from typing import List
 
 
-def filter_datum(fields, redaction, message, separator):
+def filter_datum(fields: List[str], redaction: str, message: str, separator: str) -> str:
     """ A function that returns the log message obfuscated """
     lst = message.split(separator)
 
     for f in fields:
         for i in range(len(lst)):
             if lst[i].startswith(f):
-                subst = f + '=' + redaction + separator
-                lst[i] = subst
+                subst = f + '=' + redaction
+                re.sub(lst[i], subst, lst[i])
     return separator.join(lst)
