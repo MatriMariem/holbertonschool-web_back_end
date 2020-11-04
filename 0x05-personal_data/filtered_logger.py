@@ -67,3 +67,19 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
       database=os.getenv('PERSONAL_DATA_DB_NAME')
     )
     return c
+
+
+def main():
+    """ main function """
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM users;")
+    for row in cursor:
+        print(row[0])
+    cursor.close()
+    db.close()
+
+
+if __name__ == '__main__':
+    """ Only the main function should run when the module is executed """
+    main()
