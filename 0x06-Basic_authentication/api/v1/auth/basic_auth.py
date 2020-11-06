@@ -59,7 +59,7 @@ class BasicAuth(Auth):
            not isinstance(user_pwd, str)
            ):
             return None
-        objs = User.search({"email": user_email})
+        objs = User().search({"email": user_email})
         if not objs:
             return None
         if objs[0].is_valid_password(user_pwd):
