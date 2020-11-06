@@ -21,8 +21,9 @@ if os.getenv("AUTH_TYPE") == "auth":
 @app.before_request
 def before_request_func():
     """ before request function """
-    excluded_paths = ['/api/v1/status/', '/api/v1/unauthorized/',
-                      '/api/v1/forbidden/']
+    # excluded_paths = ['/api/v1/status/', '/api/v1/unauthorized/',
+    #                   '/api/v1/forbidden/']
+    excluded_paths = ['/api/v1/unauthorized/', '/api/v1/forbidden/']
     if auth is None:
         pass
     if auth.require_auth(request.path, excluded_paths):
