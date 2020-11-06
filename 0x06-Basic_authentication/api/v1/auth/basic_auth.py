@@ -72,7 +72,7 @@ class BasicAuth(Auth):
         if not request:
             return None
         auth_header = Auth().authorization_header(request)
-        authorization_header = self.extract_base64_authorization_header(auth_header)
-        dec_header = self.decode_base64_authorization_header(authorization_header)
-        credentials = self.extract_user_credentials(dec_header)
-        return self.user_object_from_credentials(credentials[0], credentials[1])
+        auth_header = self.extract_base64_authorization_header(auth_header)
+        dec_header = self.decode_base64_authorization_header(auth_header)
+        cred = self.extract_user_credentials(dec_header)
+        return self.user_object_from_credentials(cred[0], cred[1])
