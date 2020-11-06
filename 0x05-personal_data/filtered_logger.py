@@ -40,7 +40,8 @@ def filter_datum(fields: List[str], redaction: str, message: str,
         for i in range(len(lst)):
             if lst[i].startswith(f):
                 subst = f + '=' + redaction
-                lst[i] = re.sub(lst[i], subst, lst[i])
+                lst[i] = re.sub(lst[i], '', lst[i])
+                lst[i] = subst
     return separator.join(lst)
 
 
@@ -52,6 +53,7 @@ def get_logger() -> logging.Logger:
     logger.setLevel(logging.INFO)
     logger.propagate = False
     ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
     formatter = RedactingFormatter(list(PII_FIELDS))
     ch.setFormatter(formatter)
     logger.addHandler(ch)
@@ -74,8 +76,13 @@ def main():
     db = get_db()
     cursor = db.cursor()
     cursor.execute("SELECT * FROM users;")
+    logger = get_logger()
     for row in cursor:
-        print(row[0])
+        msg = "name={}; email={}; phone={}; ssn={}; password={}; ip={}; last_login={}; user_agent={}; ".format(
+        row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]
+        )
+        msg = filter_datum(list(PII_FIELDS), '***', msg, '; ')
+        logger.info(msg)
     cursor.close()
     db.close()
 
