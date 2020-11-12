@@ -28,7 +28,7 @@ elif os.getenv("AUTH_TYPE") == "auth":
 def before_request_func():
     """ before request function """
     excluded_paths = ['/api/v1/status/', '/api/v1/unauthorized/',
-                      '/api/v1/forbidden/']
+                      '/api/v1/forbidden/', '/api/v1/auth_session/login/']
     if auth is None:
         return None
     if auth.require_auth(request.path, excluded_paths):
@@ -39,6 +39,9 @@ def before_request_func():
         abort(401)
     if auth.current_user(request) is None:
         abort(403)
+    if (not auth.authorization_header(request)
+            and not auth.session_cookie(request)):
+        abort(401)
     request.current_user = auth.current_user(request)
 
 
