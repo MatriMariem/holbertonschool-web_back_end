@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+""" Module of Index views
+"""
+from flask import abort, jsonify, request
+from api.v1.views import app_views
+from models.user import User
+import os
+
+
+
+@app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
+def login() -> str:
+    """ POST /api/v1/auth_session/login
+    """
+    email = request.form.get("email")
+    if not email or email == '':
+        return jsonify({ "error": "email missing" }), 400
+    password = request.form.get("password")
+    if not password or password == '':
+        return jsonify({ "error": "password missing" }), 400
+    objs = User().search({"email": email})
+    if not objs or objs == []:
+        return jsonify({ "error": "no user found for this email" }), 404
+    if not objs[0].is_valid_password(password):
+        return jsonify({ "error": "wrong password" }), 401
+    from api.v1.app import auth
+    session_id = auth.create_session(objs[0].id)
+    return objs[0].to_json().set_cookie(os.getenv("SESSION_NAME"), session_id)
+
+
+@app_views.route('/unauthorized', methods=['GET'], strict_slashes=False)
+def unauthorized() -> str:
+    """ GET /api/v1/unauthorized
+    Return:
+      - Error
+    """
+    return abort(401)
+
+
+@app_views.route('/forbidden', methods=['GET'], strict_slashes=False)
+def forbidden() -> str:
+    """ GET /api/v1/forbidden
+    Return:
+      - Error
+    """
+    return abort(403)
+
+
+@app_views.route('/stats/', strict_slashes=False)
+def stats() -> str:
+    """ GET /api/v1/stats
+    Return:
+      - the number of each objects
+    """
+    from models.user import User
+    stats = {}
+    stats['users'] = User.count()
+    return jsonify(stats)
