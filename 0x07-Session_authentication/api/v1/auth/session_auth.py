@@ -20,4 +20,4 @@ class SessionAuth(Auth):
         """ returns a User ID based on a Session ID """
         if not session_id or not isinstance(session_id, str):
             return None
-        return user_id_by_session_id.get(session_id)
+        return self.user_id_by_session_id.get(session_id)
