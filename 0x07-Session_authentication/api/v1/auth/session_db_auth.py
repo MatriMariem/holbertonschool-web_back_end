@@ -35,7 +35,7 @@ class SessionDBAuth(SessionExpAuth):
         if not objs or len(objs) == 0:
             return None
         limit_date = (timedelta(seconds=self.session_duration) +
-                      self.user_id_by_session_id[session_id]["created_at"])
+                      objs[0]["created_at"])
         if limit_date < datetime.now():
             self.destroy_session(request)
             return None
@@ -50,6 +50,5 @@ class SessionDBAuth(SessionExpAuth):
             return None
         session_id = self.session_cookie(request)
         objs = UserSession.search({"session_id": session_id})
-        del self.user_id_by_session_id[session_id]
         if objs and len(objs) > 0:
             objs[0].remove()
