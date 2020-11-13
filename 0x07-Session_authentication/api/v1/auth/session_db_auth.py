@@ -2,6 +2,7 @@
 """ SessionDBAuth inherits from SessionExpAuth """
 from api.v1.auth.session_exp_auth import SessionExpAuth
 from models.user_session import UserSession
+from datetime import datetime, timedelta
 
 
 class SessionDBAuth(SessionExpAuth):
@@ -31,6 +32,10 @@ class SessionDBAuth(SessionExpAuth):
             return None
         objs = UserSession.search({"session_id": session_id})
         if not objs or len(objs) == 0:
+            return None
+        limit_date = (timedelta(seconds=self.session_duration) +
+                      self.user_id_by_session_id[session_id]["created_at"])
+        if limit_date < datetime.now():
             return None
         return objs[0].user_id
 
