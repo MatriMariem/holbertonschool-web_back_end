@@ -27,8 +27,11 @@ class SessionExpAuth(SessionAuth):
         session_id = super().create_session(user_id)
         if not session_id:
             return None
-        self.user_id_by_session_id[session_id] = {
-            "user_id": user_id, "created_at": datetime.now()}
+        session_directory = {
+            "user_id": user_id,
+            "created_at": datetime.now()
+        }
+        self.user_id_by_session_id[session_id] = session_directory
         return session_id
 
     def user_id_for_session_id(self, session_id=None):
