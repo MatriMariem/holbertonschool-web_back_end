@@ -26,11 +26,7 @@ class SessionAuth(Auth):
     def current_user(self, request=None):
         """ returns a User instance based on a cookie value: """
         cookie = self.session_cookie(request)
-        user_id = self.user_id_by_session_id.get(cookie)
-        if isinstance(user_id, dict):
-            userId = user_id["user_id"]
-        else:
-            userId = user_id
+        user_id = self.user_id_for_session_id(cookie)
         return User.get(userId)
 
     def destroy_session(self, request=None):
