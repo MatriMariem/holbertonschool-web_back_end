@@ -34,6 +34,10 @@ class SessionDBAuth(SessionExpAuth):
         objs = UserSession.search({"session_id": session_id})
         if not objs or len(objs) == 0:
             return None
+        if session_id not in self.user_id_by_session_id:
+            return None
+        if "created_at" not in self.user_id_by_session_id[session_id]:
+            return None
         limit_date = (timedelta(seconds=self.session_duration) +
                       self.user_id_by_session_id[session_id]["created_at"])
         if limit_date < datetime.now():
