@@ -53,7 +53,10 @@ class SessionDBAuth(SessionExpAuth):
         if not request:
             return None
         session_id = self.session_cookie(request)
+        if not session_id:
+            return None
         objs = UserSession.search({"session_id": session_id})
-        del self.user_id_by_session_id[session_id]
+        if session_id in user_id_by_session_id:
+            del self.user_id_by_session_id[session_id]
         if objs and len(objs) > 0:
             objs[0].remove()
