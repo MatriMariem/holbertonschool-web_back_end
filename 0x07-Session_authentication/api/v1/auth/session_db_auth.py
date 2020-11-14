@@ -54,7 +54,7 @@ class SessionDBAuth(SessionExpAuth):
         based on the Session ID from the request cookie
         """
         if not request:
-            return None
+            return False
         try:
             session_id = self.session_cookie(request)
             if not session_id:
@@ -63,5 +63,6 @@ class SessionDBAuth(SessionExpAuth):
             del self.user_id_by_session_id[session_id]
             if objs and len(objs) > 0:
                 objs[0].remove()
+                return True
         except Exception as e:
-            return None
+            return False
