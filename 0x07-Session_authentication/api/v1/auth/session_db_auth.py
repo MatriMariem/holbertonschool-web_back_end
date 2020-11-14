@@ -32,7 +32,7 @@ class SessionDBAuth(SessionExpAuth):
         if not session_id:
             return None
         try:
-            UserSession.load_from_file()
+            # UserSession.load_from_file()
             objs = UserSession.search({"session_id": session_id})
             if not objs or len(objs) == 0:
                 return None
@@ -41,9 +41,9 @@ class SessionDBAuth(SessionExpAuth):
             if "created_at" not in self.user_id_by_session_id[session_id]:
                 return None
             limit_date = (timedelta(seconds=self.session_duration) +
-                          self.user_id_by_session_id[session_id]["created_at"])
+                          objs[0].created_at)
             if limit_date < datetime.now():
-                self.destroy_session(request)
+                # self.destroy_session(request)
                 return None
             return objs[0].user_id
         except Exception as e:
