@@ -49,20 +49,17 @@ class SessionDBAuth(SessionExpAuth):
             return None
 
     def destroy_session(self, request=None):
+        """Delete the user session / log out
         """
-        destroys the UserSession
-        based on the Session ID from the request cookie
-        """
-        if not request:
-            return False
-        try:
+        if request:
             session_id = self.session_cookie(request)
             if not session_id:
                 return False
-            objs = UserSession.search({"session_id": session_id})
-            del self.user_id_by_session_id[session_id]
-            if objs and len(objs) > 0:
-                objs[0].remove()
+            if not self.user_id_for_session_id(session_id):
+                return False
+            users = UserSession.search({'session_id': session_id})
+            for u in users:
+                u.remove()
+                UserSession.save_to_file()
                 return True
-        except Exception as e:
-            return False
+        return False
