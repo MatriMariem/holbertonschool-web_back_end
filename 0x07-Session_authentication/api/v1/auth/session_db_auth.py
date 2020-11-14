@@ -25,46 +25,38 @@ class SessionDBAuth(SessionExpAuth):
         return session_id
 
     def user_id_for_session_id(self, session_id=None):
-        """
-        returns the User ID
-        by requesting UserSession in the database based on session_id
-        """
-        if not session_id:
-            return None
-        try:
-            objs = UserSession.search({"session_id": session_id})
-            if not objs or len(objs) == 0:
-                return None
-            if session_id not in self.user_id_by_session_id:
-                return None
-            if "created_at" not in self.user_id_by_session_id[session_id]:
-                return None
-            limit_date = (timedelta(seconds=self.session_duration) +
-                          self.user_id_by_session_id[session_id]["created_at"])
-            if limit_date < datetime.now():
-                self.destroy_session(request)
-                return None
-            return objs[0].user_id
-        except Exception as e:
-            return None
-
-    def destroy_session(self, request=None):
-        """ Destroy a current session """
-        if request is None:
-            return False
-
-        session_id = self.session_cookie(request)
+        """ Return the user ID at the current session ID """
         if session_id is None:
-            return False
-
+            return None
         try:
             sessions = UserSession.search({session_id: session_id})
             if sessions is None:
-                return False
+                return None
 
-            sessions[0].remove()
+            session_time = timedelta(seconds=self.session_duration)
 
-            return True
+            if sessions[0].created_at + session_time < datetime.utcnow():
+                return None
 
+            return sessions[0].user_id
         except ValueError:
+            return None
+
+    def destroy_session(self, request=None):
+        """
+        destroys the UserSession
+        based on the Session ID from the request cookie
+        """
+        if not request:
+            return False
+        try:
+            session_id = self.session_cookie(request)
+            if not session_id:
+                return False
+            objs = UserSession.search({"session_id": session_id})
+            del self.user_id_by_session_id[session_id]
+            if objs and len(objs) > 0:
+                objs[0].remove()
+                return True
+        except Exception as e:
             return False
