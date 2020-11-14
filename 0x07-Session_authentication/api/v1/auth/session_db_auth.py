@@ -31,19 +31,22 @@ class SessionDBAuth(SessionExpAuth):
         """
         if not session_id:
             return None
-        objs = UserSession.search({"session_id": session_id})
-        if not objs or len(objs) == 0:
+        try:
+            objs = UserSession.search({"session_id": session_id})
+            if not objs or len(objs) == 0:
+                return None
+            if session_id not in self.user_id_by_session_id:
+                return None
+            if "created_at" not in self.user_id_by_session_id[session_id]:
+                return None
+            limit_date = (timedelta(seconds=self.session_duration) +
+                          self.user_id_by_session_id[session_id]["created_at"])
+            if limit_date < datetime.now():
+                self.destroy_session(request)
+                return None
+            return objs[0].user_id
+        except Exception as e:
             return None
-        if session_id not in self.user_id_by_session_id:
-            return None
-        if "created_at" not in self.user_id_by_session_id[session_id]:
-            return None
-        limit_date = (timedelta(seconds=self.session_duration) +
-                      self.user_id_by_session_id[session_id]["created_at"])
-        if limit_date < datetime.now():
-            # self.destroy_session(request)
-            return None
-        return objs[0].user_id
 
     def destroy_session(self, request=None):
         """
@@ -52,10 +55,13 @@ class SessionDBAuth(SessionExpAuth):
         """
         if not request:
             return None
-        session_id = self.session_cookie(request)
-        if not session_id:
+        try:
+            session_id = self.session_cookie(request)
+            if not session_id:
+                return None
+            objs = UserSession.search({"session_id": session_id})
+            del self.user_id_by_session_id[session_id]
+            if objs and len(objs) > 0:
+                objs[0].remove()
+        except Exception as e:
             return None
-        objs = UserSession.search({"session_id": session_id})
-        del self.user_id_by_session_id[session_id]
-        if objs and len(objs) > 0:
-            objs[0].remove()
