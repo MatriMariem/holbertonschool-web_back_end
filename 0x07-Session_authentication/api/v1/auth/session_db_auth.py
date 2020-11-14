@@ -25,21 +25,27 @@ class SessionDBAuth(SessionExpAuth):
         return session_id
 
     def user_id_for_session_id(self, session_id=None):
-        """ Return the user ID at the current session ID """
-        if session_id is None:
+        """
+        returns the User ID
+        by requesting UserSession in the database based on session_id
+        """
+        if not session_id:
             return None
         try:
-            sessions = UserSession.search({session_id: session_id})
-            if sessions is None:
+            objs = UserSession.search({"session_id": session_id})
+            if not objs or len(objs) == 0:
                 return None
-
-            session_time = timedelta(seconds=self.session_duration)
-
-            if sessions[0].created_at + session_time < datetime.utcnow():
+            if session_id not in self.user_id_by_session_id:
                 return None
-
-            return sessions[0].user_id
-        except ValueError:
+            if "created_at" not in self.user_id_by_session_id[session_id]:
+                return None
+            limit_date = (timedelta(seconds=self.session_duration) +
+                          self.user_id_by_session_id[session_id]["created_at"])
+            if limit_date < datetime.now():
+                self.destroy_session(request)
+                return None
+            return objs[0].user_id
+        except Exception as e:
             return None
 
     def destroy_session(self, request=None):
