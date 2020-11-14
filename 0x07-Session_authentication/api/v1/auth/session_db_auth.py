@@ -41,7 +41,7 @@ class SessionDBAuth(SessionExpAuth):
         limit_date = (timedelta(seconds=self.session_duration) +
                       self.user_id_by_session_id[session_id]["created_at"])
         if limit_date < datetime.now():
-            self.destroy_session(request)
+            # self.destroy_session(request)
             return None
         return objs[0].user_id
 
