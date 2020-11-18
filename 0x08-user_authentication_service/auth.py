@@ -21,7 +21,7 @@ class Auth:
         "create instance of db"
         self._db = DB()
 
-    def register_user(email: str, password: str) -> User:
+    def register_user(self, email: str, password: str) -> User:
         """ registers a new user """
         try:
             user = self._db.find_user_by(email=email)
