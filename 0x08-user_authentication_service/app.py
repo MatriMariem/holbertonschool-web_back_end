@@ -13,12 +13,17 @@ def welcome():
     """ returns a message when the route / is requested """
     return jsonify({"message": "Bienvenue"})
 
+
 @app.route('/users', methods=['POST'])
 def users():
     """ registers a new user """
     email = request.form.get('email')
-    print("REQUUEEEEEESSSSSSSSSST", request.form.get('email'))
-    return None
+    password = request.form.get('password')
+    try:
+        user = AUTH.register_user(email, password)
+        return jsonify({"email": email, "message": "user created"})
+    except ValueError:
+        return jsonify({"message": "email already registered"})
 
 
 if __name__ == '__main__':
