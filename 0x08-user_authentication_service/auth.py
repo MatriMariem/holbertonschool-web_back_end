@@ -12,7 +12,7 @@ def _hash_password(password: str) -> str:
     The returned string is a salted hash of the input password,
     hashed with bcrypt.hashpw
     """
-    return bcrypt.hashpw(password.encode(), bcrypt.gensalt())7
+    return bcrypt.hashpw(password.encode(), bcrypt.gensalt())
 
 
 def _generate_uuid() -> str:
@@ -47,3 +47,15 @@ class Auth:
                 return bcrypt.checkpw(password.encode(), user.hashed_password)
         except NoResultFound:
             return False
+
+    def create_session(self, email: str) -> str:
+        """ It takes an email string argument
+        and returns the session ID as a string."""
+        try:
+            user = self._db.find_user_by(email=email)
+            if user:
+                session_id = _generate_uuid()
+                self._db.update_user(user.id, session_id=session_id)
+                return session_id
+        except NoResultFound:
+            return None
