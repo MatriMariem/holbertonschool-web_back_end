@@ -65,9 +65,6 @@ class DB:
         then commit changes to the database.
         """
         user = self.find_user_by(id=user_id)
-        try:
-            for k, v in kwargs:
-                user.k = v
-        except Exception as e:
-            raise ValueError
+        for k, v in kwargs.items():
+            user.k = v
         self._session.commit()
