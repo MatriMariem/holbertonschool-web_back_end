@@ -6,10 +6,10 @@ from typing import TypeVar
 
 
 class DB:
-    """ DB class """
+    """ Database class for SQLAlchemy """
 
     def __init__(self):
-        """ constructor """
+        """ creates engine """
         self._engine = create_engine("sqlite:///a.db", echo=False)
         Base.metadata.drop_all(self._engine)
         Base.metadata.create_all(self._engine)
@@ -24,7 +24,7 @@ class DB:
         return self.__session
 
     def add_user(self, email: str, hashed_password: str) -> TypeVar('User'):
-        """ This method saves the user to the database """
+        """ This method saves a new user to the database """
         user = User(email=email, hashed_password=hashed_password)
         self._session.add(user)
         self._session.commit()
