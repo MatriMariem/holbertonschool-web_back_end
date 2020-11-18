@@ -42,6 +42,8 @@ class DB:
         and returns the first row found in the users table
         as filtered by the method’s input arguments.
         """
+        if kwargs is None:
+            raise InvalidRequestError
         try:
             user = self._session.query(User).filter_by(**kwargs).first()
         except InvalidRequestError:
