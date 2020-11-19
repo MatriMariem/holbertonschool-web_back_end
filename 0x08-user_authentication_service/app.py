@@ -39,7 +39,7 @@ def sessions():
     if not session_id:
         abort(401)
     response = make_response(jsonify({"email": email, "message": "logged in"}))
-    response.set_cookie("session_id"=session_id)
+    response.set_cookie("session_id", session_id)
     return response
 
 
