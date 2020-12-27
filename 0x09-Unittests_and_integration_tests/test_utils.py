@@ -44,11 +44,11 @@ class TestGetJson(unittest.TestCase):
 
 
 class TestMemoize(unittest.TestCase):
-    """ test memoization """
+    """ class to test memoization """
     def test_memoize(self):
         """ test memoize method """
         class TestClass:
-            """ class TestClass"""
+            """ class TestClass to test memoization"""
             def a_method(self):
                 """ returns 42 """
                 return 42
