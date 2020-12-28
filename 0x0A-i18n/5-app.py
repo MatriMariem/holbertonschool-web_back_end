@@ -27,7 +27,9 @@ users = {
 def before_request():
     """ function to determine if a user is logged in, and the language """
     id = request.args.get('login_as')
-    g.user = get_user(id)
+    d_user = get_user(id)
+    if d_user:
+        g.user = d_user
 
 
 def get_user(id):
@@ -42,7 +44,7 @@ def hello():
     """ render a basic html file """
     login = False
     username = ''
-    if g.user is not None:
+    if g.get('user') is not None:
         login = True
         username = g.user['name']
 
@@ -55,9 +57,9 @@ def get_locale():
     lg = request.args.get('locale')
     if lg in app.config['LANGUAGES']:
         return lg
-    if (g.user and g.user.get("locale", None)
-            and g.user["locale"] in app.config['LANGUAGES']):
-        return g.user["locale"]
+    # if (g.user and g.user.get("locale", None)
+    #         and g.user["locale"] in app.config['LANGUAGES']):
+    #     return g.user["locale"]
     return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 
