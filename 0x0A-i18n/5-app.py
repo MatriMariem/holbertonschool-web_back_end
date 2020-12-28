@@ -26,16 +26,13 @@ users = {
 @app.before_request
 def before_request():
     """ function to determine if a user is logged in, and the language """
-    d_user = None
-    if request.full_path.split('/')[1][:10] == "?login_as=":
-        id = request.full_path.split('/')[1][10:]
-        d_user = get_user(id)
-    g.user = d_user
+    id = request.args.get('login_as')
+    g.user = get_user(id)
 
 
 def get_user(id):
     """ returns a user dictionary or None """
-    if int(id) in users:
+    if id and int(id) in users:
         return users[int(id)]
     return None
 
@@ -55,10 +52,9 @@ def hello():
 @babel.localeselector
 def get_locale():
     """ a function to determine the best match with the supported languages """
-    if request.full_path.split('/')[1][:8] == "?locale=":
-        lg = request.full_path.split('/')[1][8:]
-        if lg in app.config['LANGUAGES']:
-            return lg
+    lg = request.args.get('locale')
+    if lg in app.config['LANGUAGES']:
+        return lg
     if (g.user and g.user.get("locale", None)
             and g.user["locale"] in app.config['LANGUAGES']):
         return g.user["locale"]
