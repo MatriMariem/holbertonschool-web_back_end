@@ -43,12 +43,10 @@ def get_user(id):
 def hello():
     """ render a basic html file """
     login = False
-    username = ''
     if g.get('user') is not None:
         login = True
-        username = g.user['name']
 
-    return render_template('5-index.html', login=login, username=username)
+    return render_template('5-index.html', login=login)
 
 
 @babel.localeselector
