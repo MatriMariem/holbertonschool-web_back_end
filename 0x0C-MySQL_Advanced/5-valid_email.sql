@@ -7,7 +7,7 @@ CREATE TRIGGER email_validation
   FOR EACH ROW
   BEGIN
     IF OLD.email <> NEW.email THEN
-        SET NEW.valid_email = IF(NEW.valid_email = 0, 1, 0);
+        SET NEW.valid_email = 0;
     END IF;
   END; //
 
