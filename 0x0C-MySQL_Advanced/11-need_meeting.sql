@@ -6,4 +6,4 @@ SELECT
     name
 FROM
     students
-WHERE score < 80 AND ((last_meeting = 0) OR ADDDATE(CURDATE(), INTERVAL -1 MONTH) > last_meeting);
+WHERE score < 80 AND ((last_meeting = NULL) OR ADDDATE(CURDATE(), INTERVAL -1 MONTH) > last_meeting);
