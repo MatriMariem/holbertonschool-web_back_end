@@ -16,6 +16,25 @@ DELIMITER //
 
 CREATE PROCEDURE ComputeAverageWeightedScoreForUsers()
 BEGIN
-SELECT (CALL ComputeAverageWeightedScoreForUser(id)) FROM users;
+
+DECLARE finished INTEGER DEFAULT 0;
+DECLARE user_id INT;
+
+DECLARE curid CURSOR FOR SELECT id FROM users;
+
+DECLARE CONTINUE HANDLER
+      FOR NOT FOUND SET finished = 1;
+
+OPEN curid;
+
+getid: LOOP
+  FETCH curid INTO user_id;
+  IF finished = 1 THEN
+  LEAVE getEmail;
+  END IF;
+CALL ComputeAverageWeightedScoreForUser(user_id);
+END LOOP getid;
+CLOSE curid;
+
 END//
 DELIMITER ;
