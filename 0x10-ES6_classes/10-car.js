@@ -6,8 +6,6 @@ export default class Car {
   }
 
   cloneCar() {
-    const name = eval(this.constructor.name);
-    console.log("heeeeeeyyyyy", typeof name);
-    return new name();
+    return new this.constructor();
   }
 }
