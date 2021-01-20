@@ -1,6 +1,7 @@
 const app = require('../server');
 const AppController = require('../controllers/AppController');
 const StudentsController = require('../controllers/StudentsController');
+
 app.get('/', (req, res) => {
   AppController.getHomepage(req, res);
 });

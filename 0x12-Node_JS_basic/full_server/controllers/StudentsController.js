@@ -1,6 +1,7 @@
 const readDatabase = require('../utils');
+
 class StudentsController {
-  static getAllStudents (request, response, path) {
+  static getAllStudents(request, response, path) {
     readDatabase(path).then((data) => {
       response.status = 200;
       let res = '';
@@ -15,12 +16,12 @@ class StudentsController {
     });
   }
 
-  static getAllStudentsByMajor (request, response, path) {
+  static getAllStudentsByMajor(request, response, path) {
     readDatabase(path).then((data) => {
       if (request.path === '/CS') {
-        response.send(`List: ${data['CS']}`);
+        response.send(`List: ${data.CS}`);
       } else if (request.path === '/SWE') {
-        response.send(`List: ${data['SWE']}`);
+        response.send(`List: ${data.SWE}`);
       } else {
         response.status(500);
         response.send('Major parameter must be CS or SWE');
